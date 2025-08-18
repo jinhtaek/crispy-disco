@@ -1,5 +1,0 @@
-test
-Hi, dahee
-Nice to meet you
-
-This is test for git upload using web site at 25.02.1. 15:52:50
