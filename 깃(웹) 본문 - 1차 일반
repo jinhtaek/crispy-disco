@@ -1,0 +1,65 @@
+import pygame, random, sys
+
+pygame.init()
+WIDTH, HEIGHT = 800, 200
+win = pygame.display.set_mode((WIDTH, HEIGHT))
+clock = pygame.time.Clock()
+font = pygame.font.SysFont(None, 36)
+
+dino = pygame.Rect(50, 150, 40, 40)
+gravity = 0
+jumping = False
+obstacles = []
+
+def draw(score):
+    win.fill((255,255,255))
+    pygame.draw.rect(win, (0,0,0), dino)
+    for obs in obstacles:
+        pygame.draw.rect(win, (255,0,0), obs)
+    score_text = font.render(f"Score: {score}", True, (0,0,0))
+    win.blit(score_text, (10,10))
+    pygame.display.update()
+
+def main():
+    global gravity, jumping
+    score = 0
+    frame = 0
+
+    while True:
+        clock.tick(60)
+        for e in pygame.event.get():
+            if e.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE] and not jumping:
+            gravity = -10
+            jumping = True
+
+        gravity += 0.5
+        dino.y += int(gravity)
+        if dino.y >= 150:
+            dino.y = 150
+            jumping = False
+
+        # 장애물 추가
+        if frame % 90 == 0:
+            obstacles.append(pygame.Rect(WIDTH, 150, 30, 40))
+        
+        # 장애물 이동 및 충돌
+        for obs in obstacles[:]:
+            obs.x -= 5
+            if obs.colliderect(dino):
+                print("Game Over!")
+                pygame.quit()
+                sys.exit()
+            if obs.x < -30:
+                obstacles.remove(obs)
+                score += 1
+        
+        draw(score)
+        frame += 1
+
+if __name__ == "__main__":
+    main()
